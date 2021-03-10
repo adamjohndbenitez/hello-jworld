@@ -1,7 +1,4 @@
-package practice.lambdas;
-
-import java.util.List;
-import java.util.Objects;
+package play.lambdas;
 
 public class Lambdas {
 

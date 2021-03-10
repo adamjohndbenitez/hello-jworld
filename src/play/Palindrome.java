@@ -1,4 +1,4 @@
-package practice;
+package play;
 
 public class Palindrome {
     public void checkPalindrome() {

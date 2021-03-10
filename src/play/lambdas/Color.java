@@ -1,4 +1,4 @@
-package practice.lambdas;
+package play.lambdas;
 
 public enum Color {
     RED,

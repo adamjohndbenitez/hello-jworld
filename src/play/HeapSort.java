@@ -1,4 +1,4 @@
-package practice;
+package play;
 
 // Java program for implementation of Heap Sort
 public class HeapSort

@@ -1,4 +1,4 @@
-package practice;
+package play;
 
 public class StringRecursionDemo {
     public String recursiveString(String s) {

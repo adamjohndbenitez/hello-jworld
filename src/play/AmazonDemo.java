@@ -1,4 +1,4 @@
-package practice;
+package play;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +21,36 @@ import java.util.stream.Collectors;
 *
 * */
 public class AmazonDemo {
+    private String str1;
+    private String str2;
+    public AmazonDemo(String str1, String str2) {
+        this.str1 = str1;
+        this.str2 = str2;
+    }
+
+    public AmazonDemo(String str1) {
+        this.str1 = str1;
+    }
+
+    public AmazonDemo() {
+    }
+
+    public String getStr1() {
+        return str1;
+    }
+
+    public void setStr1(String str1) {
+        this.str1 = str1;
+    }
+
+    public String getStr2() {
+        return str2;
+    }
+
+    public void setStr2(String str2) {
+        this.str2 = str2;
+    }
+
     // METHOD SIGNATURE BEGINS, THIS METHOD IS REQUIRED
     public List<Integer> cellCompete(int[] states, int days)
     {

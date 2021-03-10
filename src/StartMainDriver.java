@@ -11,16 +11,20 @@ Write an efficient algorithm for the following assumptions:
         each element of array A is an integer within the range [−1,000,000..1,000,000].
 * */
 
-import practice.*;
-import practice.vertx.BasicVerticle;
-import practice.vertx.rxjava.VertxRxJava;
+import play.*;
+import play.lambdas.Lambdas;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
-public class main {
-    public static void main(String[] args) {
+public class StartMainDriver {
+    public static void mainx(String[] args) {
         System.out.println("hello world!");
-//        practice.Palindrome palindrome = new practice.Palindrome();
+//        play.Palindrome palindrome = new play.Palindrome();
 //        palindrome.checkPalindrome();
 
         // Run Length Encoding.
@@ -28,11 +32,11 @@ public class main {
         // Test various inputs
         String[] testInput = {"abcd", "aaabbccc", "abcdeedddeab"};
         for(String input : testInput) {
-            System.out.println(String.format("practice.RunLengthEncoding input : %s, output : %s", input, runLengthEncoding.encode(input)));
+            System.out.println(String.format("play.RunLengthEncoding input : %s, output : %s", input, runLengthEncoding.encode(input)));
         }
 
         // Amazon Demo :  Eight Houses
-        AmazonDemo amazonDemo = new AmazonDemo();
+        AmazonDemo amazonDemo = new AmazonDemo("s1", "s2");
         int[] cells1 = new int[]{1, 0, 0, 0, 0, 1, 0, 0}; // #1
         int[] cells2 = new int[]{1, 1, 1, 0, 1, 1, 1, 1}; // #2
         int days1 = 1, days2 = 2;
@@ -115,8 +119,8 @@ public class main {
         // In fact, I would risk the bold claim that Vert.x is suitable for more types of applications than Java EE.
         //
         // source: http://tutorials.jenkov.com/vert.x/verticles.html#listening-for-messages
-        BasicVerticle myVerticle = new BasicVerticle();
-        myVerticle.vertxDeployVerticle();
+//        BasicVerticle myVerticle = new BasicVerticle();
+//        myVerticle.vertxDeployVerticle();
 
 
         System.out.println("Vert.x API for RxJava");
@@ -131,9 +135,99 @@ public class main {
         // 2. via the Rxified Vert.x API enhancing the core Vert.x API.
         //
         // source: https://vertx.io/docs/vertx-rx/java/
-        VertxRxJava vertxRxJava = new VertxRxJava();
-        vertxRxJava.readStreamSupport1();
+//        VertxRxJava vertxRxJava = new VertxRxJava();
+//        vertxRxJava.readStreamSupport1();
 
+    }
+
+    private static final List<Object> CLASS_LIST = new ArrayList<>(); // List of classes.
+    static {
+        addClasses(new AmazonDemo("1", "2"));
+        addClasses(new Lambdas());
+    }
+    private static void addClasses(Object obj) {
+        CLASS_LIST.add(obj);
+    }
+
+    //TODO: migrate the contents here in main driver.
+    public static void main(String[] args) throws Exception {
+        Scanner scan = new Scanner(System.in);
+        System.out.println("#####################");
+        System.out.println("# hello java world! #");
+        System.out.println("#####################");
+        int sizeClz = 0;
+        for (Object obj: CLASS_LIST) {
+            System.out.println(String.format("[%s] Class name => [%s]", ++sizeClz, obj.getClass().getName())); // Print package first play.<inner_packages>.Classes
+        }
+        System.out.println("Select a [number] of a class above: ");
+        int ansClz = userInput(scan, sizeClz);
+        // Ensure/Secure user input choose between how much classes were added.
+        Class<?> clzz = CLASS_LIST.get(ansClz - 1).getClass();
+        System.out.println("Chose class => " + clzz);
+//        Constructor<?> constructor = clzz.getConstructor();
+        Constructor<?>[] constructors = clzz.getDeclaredConstructors();
+
+        //TODO: extract all constructors and select 1 to instantiate and supply input on parameterTypes. WIP
+        //TODO: ability to instantiate an object of the class with it's parameters. WIP
+        int sizeCnstr = 1;
+        for (Constructor<?> c : constructors) {
+            System.out.println(String.format("[%s] constructor => [%s]", sizeCnstr++, c));
+//            for (Class<?> parameterType : c.getParameterTypes()) {
+//                System.out.println("parameterType=>" + parameterType.);
+//            }
+        }
+        System.out.println("Select a constructor to invoke:");
+        int ansConstructor = userInput(scan, sizeCnstr);
+        System.out.println("Chose constructor => " + constructors[ansConstructor - 1]);
+        Constructor newConstructor = constructors[ansConstructor - 1];
+//        Object instConstructor = newConstructor.newInstance(newConstructor.getParameterTypes()); //FIXME: java.lang.IllegalArgumentException
+//        System.out.println("instConstructor => " + instConstructor);
+
+        System.out.println(String.format("Now select a [number] of a method of %s to invoke & show output: ", newConstructor));
+        Method[] methods = clzz.getDeclaredMethods(); // Gets all methods except inherited methods.
+        int sizeMethods = 1;
+        System.out.println("It has " + methods.length + " methods.");
+        for (Method method : methods) {
+            System.out.println(String.format("[%s] methods => [%s]", sizeMethods++, method.getName())); // TESTING...
+        }
+//        //TODO: User Input method.
+//        System.out.println(String.format("Now select a [number] of a method of %s to run & show output: ", constructor));
+//        System.out.print(">");
+//        int ansMethod = scan.nextInt();
+//        // Ensure/Secure user input choose between how much methods were added and transform it into index (starts [0])
+//        System.out.println(String.format("Chose [%s] method = %s", ansMethod, methods[sizeMethods <= ansMethod || ansMethod >= 1 ? ansMethod-1 : 0]));
+
+        //TODO: Once selected the class will fire up/run through the methods.
+        //      -OR- interactively ask User Inputs to feed arguments to methods.
+        //      -OR- list down first the methods of the Class to run and ask User Input for arguments.
+
+        scan.close();
+    }
+
+    private static int userInput(Scanner scan, int size) {
+        boolean isInt;
+        boolean isAbove = false;
+        int input = 0;
+        do {
+            System.out.print(">");
+            isInt = scan.hasNextInt();
+            String strScan = scan.next();
+            if (strScan.equalsIgnoreCase("quit")) {
+                System.exit(0);
+            } else {
+                if (isInt) {
+                    input = Integer.parseInt(strScan);
+                    isAbove = size < input || input < 0;
+                    if (isAbove) {
+                        System.out.println("Try again [Input => " + input + " is out, we only have => " + size + " Classes]");
+                    }
+                } else {
+                    System.out.println("Try again [Invalid => " + scan.next() + "]");
+                }
+            }
+        } while (!isInt || isAbove);
+
+        return input;
     }
 }
 

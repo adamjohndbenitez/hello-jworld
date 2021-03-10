@@ -1,4 +1,4 @@
-package practice;
+package play;
 
 /**
  * Thread creation by implementing the Runnable Interface

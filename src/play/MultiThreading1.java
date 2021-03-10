@@ -1,4 +1,4 @@
-package practice;
+package play;
 
 /**
  * Multithreading is a Java feature that allows concurrent execution of two or more parts of a program
