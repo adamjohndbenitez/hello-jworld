@@ -159,37 +159,53 @@ public class StartMainDriver {
         for (Object obj: CLASS_LIST) {
             System.out.println(String.format("[%s] Class name => [%s]", ++sizeClz, obj.getClass().getName())); // Print package first play.<inner_packages>.Classes
         }
-        System.out.println("Select a [number] of a class above: ");
+        System.out.println("Select a [number] => class above: ");
         int ansClz = userInput(scan, sizeClz);
         // Ensure/Secure user input choose between how much classes were added.
-        Class<?> clzz = CLASS_LIST.get(ansClz - 1).getClass();
-        System.out.println("Chose class => " + clzz);
-//        Constructor<?> constructor = clzz.getConstructor();
-        Constructor<?>[] constructors = clzz.getDeclaredConstructors();
+        Class<?> clazz = CLASS_LIST.get(ansClz - 1).getClass();
+        System.out.println("Chose class => " + clazz);
 
+        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+        System.out.println(String.format("It has %s constructors", constructors.length));
         //TODO: extract all constructors and select 1 to instantiate and supply input on parameterTypes. WIP
         //TODO: ability to instantiate an object of the class with it's parameters. WIP
-        int sizeCnstr = 1;
+        int sizeConstructor = 0;
         for (Constructor<?> c : constructors) {
-            System.out.println(String.format("[%s] constructor => [%s]", sizeCnstr++, c));
-//            for (Class<?> parameterType : c.getParameterTypes()) {
-//                System.out.println("parameterType=>" + parameterType.);
-//            }
+            System.out.println(String.format("[%s] constructor => [%s]", ++sizeConstructor, c.getName()));
+            for (Class<?> parameterType : c.getParameterTypes()) {
+                System.out.println(" |__parameterType => " + parameterType.getTypeName());
+            }
         }
-        System.out.println("Select a constructor to invoke:");
-        int ansConstructor = userInput(scan, sizeCnstr);
+
+        System.out.println("Select a [number] => constructor to instantiate above:");
+        int ansConstructor = userInput(scan, sizeConstructor);
         System.out.println("Chose constructor => " + constructors[ansConstructor - 1]);
-        Constructor newConstructor = constructors[ansConstructor - 1];
+        Constructor<?> newConstructor = constructors[ansConstructor - 1];
 //        Object instConstructor = newConstructor.newInstance(newConstructor.getParameterTypes()); //FIXME: java.lang.IllegalArgumentException
 //        System.out.println("instConstructor => " + instConstructor);
 
-        System.out.println(String.format("Now select a [number] of a method of %s to invoke & show output: ", newConstructor));
-        Method[] methods = clzz.getDeclaredMethods(); // Gets all methods except inherited methods.
-        int sizeMethods = 1;
+        Method[] methods = clazz.getDeclaredMethods(); // Gets all methods except inherited methods.
+        int sizeMethods = 0;
         System.out.println("It has " + methods.length + " methods.");
         for (Method method : methods) {
-            System.out.println(String.format("[%s] methods => [%s]", sizeMethods++, method.getName())); // TESTING...
+            System.out.println(String.format("[%s] methods => [%s]", ++sizeMethods, method.getName()));
+            for (Class<?> argsType : method.getParameterTypes()) {
+                System.out.println(" |__argumentType => " + argsType.getTypeName());
+            }
         }
+        System.out.println("Select a [number] of method to invoke:");
+        int ansMethod = userInput(scan, sizeMethods);
+        System.out.println("Chose method => " + methods[ansMethod - 1]);
+        int sizeArgs = 0;
+        for (Class<?> cl : methods[ansMethod - 1].getParameterTypes()) {
+            System.out.println(String.format("[%s] argument => [%s]", ++sizeArgs, cl.getTypeName()));
+        }
+        Class<?>[] clArgs = methods[ansMethod - 1].getParameterTypes();
+        System.out.println("Select a [number] of an argument type to put values into.");
+        int ansArgument = userInput(scan, sizeArgs);
+        System.out.println("Chose type of argument to put values => " + clArgs[ansArgument - 1]);
+
+
 //        //TODO: User Input method.
 //        System.out.println(String.format("Now select a [number] of a method of %s to run & show output: ", constructor));
 //        System.out.print(">");
@@ -204,6 +220,43 @@ public class StartMainDriver {
         scan.close();
     }
 
+    private static List<Object> putValuesOnArguments(Scanner scan, String argsType) {
+        List<Object> retVal = new ArrayList<>();
+        switch (argsType) {
+            case "int":
+                System.out.println("input int type value to fill in:");
+                retVal.add(userInput(scan, 0));
+                break;
+            case "int[]":
+                System.out.println("input string of integer like 1,2,3,4");
+                //TODO: create a function that transform string into array of integers
+                retVal.add(transformIntoIntArray(argsType));
+        }
+        return retVal;
+    }
+
+    /**
+     * Converts the string of array which is separated by comma into numbers.
+     * @param str  String to be cut/split by comma.
+     * @return     array of integers.
+     */
+    private static int[] transformIntoIntArray(String str) {
+        String[] cutStrings = str.split(",");
+        int[] retVal = new int[cutStrings.length];
+        for (int i = 0; i < cutStrings.length; i++) {
+            retVal[i] = Integer.parseInt(cutStrings[i]);
+        }
+        return retVal;
+    }
+
+    /**
+     * User input must be <code>int</code> if it's not it will ask again &
+     * It validates the negative value or value that is out of size then ask again.
+     * Exits the program when user input "quit".
+     * @param scan
+     * @param size
+     * @return
+     */
     private static int userInput(Scanner scan, int size) {
         boolean isInt;
         boolean isAbove = false;
