@@ -16,6 +16,7 @@ import play.lambdas.Lambdas;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.math.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +37,7 @@ public class StartMainDriver {
         }
 
         // Amazon Demo :  Eight Houses
-        AmazonDemo amazonDemo = new AmazonDemo("s1", "s2");
+        AmazonDemo amazonDemo = new AmazonDemo("s1", "s2", 1);
         int[] cells1 = new int[]{1, 0, 0, 0, 0, 1, 0, 0}; // #1
         int[] cells2 = new int[]{1, 1, 1, 0, 1, 1, 1, 1}; // #2
         int days1 = 1, days2 = 2;
@@ -142,7 +143,7 @@ public class StartMainDriver {
 
     private static final List<Object> CLASS_LIST = new ArrayList<>(); // List of classes.
     static {
-        addClasses(new AmazonDemo("1", "2"));
+        addClasses(new AmazonDemo("1", "2", 1));
         addClasses(new Lambdas());
     }
     private static void addClasses(Object obj) {
@@ -179,9 +180,37 @@ public class StartMainDriver {
 
         System.out.println("Select a [number] => constructor to instantiate above:");
         int ansConstructor = userInput(scan, sizeConstructor);
-        System.out.println("Chose constructor => " + constructors[ansConstructor - 1]);
         Constructor<?> newConstructor = constructors[ansConstructor - 1];
-//        Object instConstructor = newConstructor.newInstance(newConstructor.getParameterTypes()); //FIXME: java.lang.IllegalArgumentException
+        System.out.println("Chose type of argument to put values constructor => " + newConstructor);
+
+        String str = null;
+        Object[] objs = new Object[newConstructor.getParameterCount()];
+        for (int i=0; i<newConstructor.getParameterCount(); i++) {
+            System.out.print(String.format("enter parameter [%s] >", newConstructor.getParameterTypes()[i].getName()));
+            switch (newConstructor.getParameterTypes()[i].getName()) {
+                case "int" :
+                    if (scan.hasNextInt()) objs[i] = Integer.parseInt(scan.next());
+                    break;
+                case "double" :
+                    if (scan.hasNextDouble()) objs[i] = Double.parseDouble(scan.next());
+                    break;
+                case "float" :
+                    if (scan.hasNextFloat()) objs[i] = Float.parseFloat(scan.next());
+                    break;
+                case "java.math.BigDecimal" :
+                    if (scan.hasNextBigDecimal()) objs[i] = new BigDecimal(scan.next());
+                    break;
+                case "java.math.BigInteger" :
+                    if (scan.hasNextBigInteger()) objs[i] = new BigDecimal(scan.next());
+                    break;
+                default:
+                    str = scan.next(); //default to string
+                    objs[i] = str;
+            }
+        }
+        System.out.println(objs);
+        Object instConstructor = newConstructor.newInstance(objs); //FIX: java.lang.IllegalArgumentException; you can now call instConstructor.getStr() w/ data.
+        //TODO: Make use of instantiated Objects.
 //        System.out.println("instConstructor => " + instConstructor);
 
         Method[] methods = clazz.getDeclaredMethods(); // Gets all methods except inherited methods.
@@ -253,14 +282,15 @@ public class StartMainDriver {
      * User input must be <code>int</code> if it's not it will ask again &
      * It validates the negative value or value that is out of size then ask again.
      * Exits the program when user input "quit".
-     * @param scan
-     * @param size
-     * @return
+     * @param scan  A simple text scanner which can parse primitive types.
+     * @param size  number of classes or constructors or methods.
+     * @return      user input of integer type.
      */
     private static int userInput(Scanner scan, int size) {
         boolean isInt;
         boolean isAbove = false;
         int input = 0;
+
         do {
             System.out.print(">");
             isInt = scan.hasNextInt();
@@ -282,6 +312,12 @@ public class StartMainDriver {
 
         return input;
     }
+
+    /*
+    TODO:
+        AtomicReference
+
+     */
 }
 
 
