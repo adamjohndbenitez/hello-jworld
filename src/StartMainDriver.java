@@ -1,7 +1,13 @@
 import play.AmazonDemo;
 import play.lambdas.Lambdas;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -13,7 +19,7 @@ import java.util.regex.Pattern;
  * @version
  * @see StartMainDriver_untidy#main(String[])
  */
-public class StartMainDriver {
+public class StartMainDriver<T> {
     private static final List<Object> CLASS_LIST = new ArrayList<>(); // List of classes.
 
     static {
@@ -37,11 +43,127 @@ public class StartMainDriver {
             System.out.println(String.format("[%s] <= Class [%s]", ++sizeClass, obj.getClass().getName())); // Print package first play.<inner_packages>.Classes
         }
         System.out.println("Pls Select a [number] of the class above: ");
-        int answerClass = userInput(scan, sizeClass);
+        int ansClass = userInput(scan, sizeClass);
 
-        // Ensure/Secure user input choose between how much classes were added.
-//        Class<?> clazz = CLASS_LIST.get(answerClass <= 0 ? answerClass - 1 : 0).getClass();
-//        System.out.println("Chose class => " + clazz);
+        Class<?> clazz = CLASS_LIST.get(ansClass - 1).getClass();
+        System.out.println(String.format("Chose class => %s", clazz));
+
+        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+        System.out.println(String.format("It has %s constructors, see list below", constructors.length));
+        Arrays.stream(constructors).forEach(System.out::println);
+        printing(constructors);
+
+        System.out.println("Pls Select a [number] of constructor above to instantiate:");
+        int ansConstructor = userInput(scan, constructors.length);
+
+        Constructor<?> newConstructor = constructors[ansConstructor - 1];
+        System.out.println(String.format("Chose class => %s", newConstructor));
+        System.out.println(String.format("It has %s parameter types, see list below", newConstructor.getParameterCount()));
+        Arrays.stream(newConstructor.getParameterTypes()).forEach(System.out::println);
+        System.out.println(String.format("Pls provide [%s] parameter type argument/s to put values on constructor [%s]",
+                newConstructor.getParameterCount(), newConstructor));
+
+        Object instConstructor = null;
+        Method method = null;
+        try {
+            instConstructor = newConstructor.newInstance(parseParameters(scan, newConstructor));
+            Method[] methods = instConstructor.getClass().getDeclaredMethods();
+            System.out.println(String.format("It has %s methods, see list below", methods.length));
+            Arrays.stream(methods).forEach(System.out::println);
+            printing(methods);
+
+            System.out.println("Pls Select a [number] of method to invoke:");
+            int ansMethod = userInput(scan, methods.length);
+
+            Method newMethod = methods[ansMethod - 1];
+            System.out.println("newMethod" + newMethod.getName());
+            method = clazz.getDeclaredMethod(newMethod.getName(), newMethod.getParameterTypes());
+            method.setAccessible(true);
+            Object retval = method.invoke(clazz.newInstance(), parseParameters(scan, method));
+            System.out.println("retval" + retval);
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            System.out.println(String.format("Exception[%s], Error msg [%s]", e, e.getMessage()));
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Prints the name, number and parameter types of the object that was passed in.
+     * @param type  any instance of an object as long as it extends {@code Executable}.
+     */
+    private static void printing(Executable[] type) {
+        int sizeConstructor = 0;
+        for (Executable exec : type) {
+            System.out.println(String.format("[%s] %s => [%s]",
+                    ++sizeConstructor, exec.getClass().getSimpleName(), exec.getName()));
+            for (Class<?> parameterType : exec.getParameterTypes()) {
+                System.out.println(String.format(" |__parameterType => %s", parameterType.getTypeName()));
+            }
+        }
+    }
+
+    /**
+     * Parse a next input of parameter type on whatever type it was interpreted for it.
+     * @param scan    input type base on what name it belongs but by default it converted into String.
+     * @param newObj  an new instance of underlying object that could be any as long as it extends {@code Executable}.
+     * @return        a new instance with an array of objects to be passed as arguments.
+     */
+    private static Object[] parseParameters(Scanner scan, Executable newObj) {
+        String str;
+        Object[] objs = new Object[newObj.getParameterCount()];
+        for (int i = 0; i < newObj.getParameterCount(); i++) {
+            System.out.print(String.format("Input parameter type for [%s] >",
+                    newObj.getParameterTypes()[i].getTypeName()));
+            switch (newObj.getParameterTypes()[i].getTypeName()) {
+                case "int" :
+                    if (scan.hasNextInt()) objs[i] = Integer.parseInt(scan.next());
+                    break;
+                case "double" :
+                    if (scan.hasNextDouble()) objs[i] = Double.parseDouble(scan.next());
+                    break;
+                case "float" :
+                    if (scan.hasNextFloat()) objs[i] = Float.parseFloat(scan.next());
+                    break;
+                case "java.math.BigDecimal" :
+                    if (scan.hasNextBigDecimal()) objs[i] = new BigDecimal(scan.next());
+                    break;
+                case "java.math.BigInteger" :
+                    if (scan.hasNextBigInteger()) objs[i] = new BigDecimal(scan.next());
+                    break;
+                case "int[]":
+                    System.out.print("input string of integer like (1,2,3,4)");
+                    //TODO: create a function that transform string into array of integers
+                    objs[i] = transformIntoIntArray(scan.next());
+                    break;
+                default:
+                    str = scan.next(); //Default to string
+                    objs[i] = str;
+            }
+        }
+//        Object instObj = null;
+//        try {
+//            instObj = newObj.newInstance(objs);
+//        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+//            System.out.println(String.format("Exception[%s], Error msg [%s]", e, e.getMessage()));
+//            e.printStackTrace();
+//        }
+//        return instObj;
+        return objs;
+    }
+
+    /**
+     * Converts the string of array which is separated by comma into numbers.
+     * @param str  String to be cut/split by comma.
+     * @return     array of integers.
+     */
+    private static int[] transformIntoIntArray(String str) {
+        String[] cutStrings = str.split(",");
+        int[] retVal = new int[cutStrings.length];
+        for (int i = 0; i < cutStrings.length; i++) {
+            retVal[i] = Integer.parseInt(cutStrings[i]);
+        }
+        return retVal;
     }
 
     /**
@@ -72,7 +194,7 @@ public class StartMainDriver {
                         System.out.println("Try again [Input => " + strScan + " is out, we only have => " + size + " Classes]");
                     }
                 } else {
-                    System.out.println("Try again [Invalid => " + strScan + "]");
+                    System.out.println("Try again [Input => " + strScan + " is not a number]");
                 }
             }
         } while (!isInt || isAbove);
