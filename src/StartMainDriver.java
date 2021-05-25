@@ -25,7 +25,7 @@ public class StartMainDriver<T> {
     static {
         addClasses(new AmazonDemo("1", "2", 1));
         addClasses(new Lambdas());
-        //TODO: Add Classes here.
+        //TODO: Add Classes here to reload upon start.
     }
 
     private static void addClasses(Object obj) {
@@ -43,7 +43,7 @@ public class StartMainDriver<T> {
             System.out.println(String.format("[%s] <= Class [%s]", ++sizeClass, obj.getClass().getName())); // Print package first play.<inner_packages>.Classes
         }
         System.out.println("Pls Select a [number] of the class above: ");
-        int ansClass = userInput(scan, sizeClass);
+        int ansClass = userInput(scan, sizeClass);//TODO: userInput should confirmation of the answer.
 
         Class<?> clazz = CLASS_LIST.get(ansClass - 1).getClass();
         System.out.println(String.format("Chose class => %s", clazz));
@@ -57,16 +57,17 @@ public class StartMainDriver<T> {
         int ansConstructor = userInput(scan, constructors.length);
 
         Constructor<?> newConstructor = constructors[ansConstructor - 1];
-        System.out.println(String.format("Chose class => %s", newConstructor));
+        System.out.println(String.format("Chose constructor => %s", newConstructor));
         System.out.println(String.format("It has %s parameter types, see list below", newConstructor.getParameterCount()));
         Arrays.stream(newConstructor.getParameterTypes()).forEach(System.out::println);
         System.out.println(String.format("Pls provide [%s] parameter type argument/s to put values on constructor [%s]",
                 newConstructor.getParameterCount(), newConstructor));
 
-        Object instConstructor = null;
-        Method method = null;
+        Object instConstructor;
+        Method method;
         try {
-            instConstructor = newConstructor.newInstance(parseParameters(scan, newConstructor));
+            Object[] objs = parseParameters(scan, newConstructor);
+            instConstructor = newConstructor.newInstance(objs);//FIXME#3: newInstance() is expecting to have the correct params. throws java.lang.IllegalArgumentException.
             Method[] methods = instConstructor.getClass().getDeclaredMethods();
             System.out.println(String.format("It has %s methods, see list below", methods.length));
             Arrays.stream(methods).forEach(System.out::println);
@@ -76,11 +77,11 @@ public class StartMainDriver<T> {
             int ansMethod = userInput(scan, methods.length);
 
             Method newMethod = methods[ansMethod - 1];
-            System.out.println("newMethod" + newMethod.getName());
+            System.out.println("newMethod: [" + newMethod.getName() + "]");
             method = clazz.getDeclaredMethod(newMethod.getName(), newMethod.getParameterTypes());
             method.setAccessible(true);
             Object retval = method.invoke(clazz.newInstance(), parseParameters(scan, method));
-            System.out.println("retval" + retval);
+            System.out.println("retval: [" + retval + "]");//FIXME: getStr returning null
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             System.out.println(String.format("Exception[%s], Error msg [%s]", e, e.getMessage()));
             e.printStackTrace();
@@ -112,43 +113,93 @@ public class StartMainDriver<T> {
     private static Object[] parseParameters(Scanner scan, Executable newObj) {
         String str;
         Object[] objs = new Object[newObj.getParameterCount()];
+
         for (int i = 0; i < newObj.getParameterCount(); i++) {
-            System.out.print(String.format("Input parameter type for [%s] >",
-                    newObj.getParameterTypes()[i].getTypeName()));
-            switch (newObj.getParameterTypes()[i].getTypeName()) {
-                case "int" :
-                    if (scan.hasNextInt()) objs[i] = Integer.parseInt(scan.next());
-                    break;
-                case "double" :
-                    if (scan.hasNextDouble()) objs[i] = Double.parseDouble(scan.next());
-                    break;
-                case "float" :
-                    if (scan.hasNextFloat()) objs[i] = Float.parseFloat(scan.next());
-                    break;
-                case "java.math.BigDecimal" :
-                    if (scan.hasNextBigDecimal()) objs[i] = new BigDecimal(scan.next());
-                    break;
-                case "java.math.BigInteger" :
-                    if (scan.hasNextBigInteger()) objs[i] = new BigDecimal(scan.next());
-                    break;
-                case "int[]":
-                    System.out.print("input string of integer like (1,2,3,4)");
-                    //TODO: create a function that transform string into array of integers
-                    objs[i] = transformIntoIntArray(scan.next());
-                    break;
-                default:
-                    str = scan.next(); //Default to string
-                    objs[i] = str;
-            }
+            boolean incorrect = false;
+            String typeName = newObj.getParameterTypes()[i].getTypeName();
+            System.out.print(String.format("Input parameter type for [%s] >", typeName));
+
+            do {
+                if (scan.hasNext()) scan = scan.reset(); //Clears explicit state after re-entering incorrect input.
+
+                switch (typeName) {
+                    case "int[]":
+                        System.out.print("input string of integer like (1,2,3,4)");
+                        objs[i] = transformIntoIntArray(scan.next());
+                        break;
+                    case "int":
+                        if (incorrect) {
+                            System.out.print("Invalid input. Try again >");
+                            String reEnter = scan.next();
+                            if (isParsable(reEnter, typeName)) {
+                                objs[i] = Integer.parseInt(reEnter);
+                                incorrect = false;
+                            } else {
+                                incorrect = true;
+                            }
+                        } else {
+                            if (scan.hasNextInt()) {
+                                objs[i] = Integer.parseInt(scan.next());
+                                incorrect = false;
+                            } else {
+                                incorrect = true;
+                            }
+                        }
+                        break;
+                    case "double":
+                        if (incorrect) {
+                            System.out.print("Invalid input. Try again >");
+                            String reEnter = scan.next();
+                            if (isParsable(reEnter, typeName)) {
+                                objs[i] = Double.parseDouble(reEnter);
+                                incorrect = false;
+                            } else {
+                                incorrect = true;
+                            }
+                        } else {
+                            if (scan.hasNextInt()) {
+                                objs[i] = Double.parseDouble(scan.next());
+                                incorrect = false;
+                            } else {
+                                incorrect = true;
+                            }
+                        }
+                        break;
+                    case "float":
+                        if (incorrect) {
+                            System.out.print("Invalid input. Try again >");
+                            String reEnter = scan.next();
+                            if (isParsable(reEnter, typeName)) {
+                                objs[i] = Float.parseFloat(reEnter);
+                                incorrect = false;
+                            } else {
+                                incorrect = true;
+                            }
+                        } else {
+                            if (scan.hasNextInt()) {
+                                objs[i] = Float.parseFloat(scan.next());
+                                incorrect = false;
+                            } else {
+                                incorrect = true;
+                            }
+                        }
+                        break;
+                    case "java.math.BigDecimal": //TODO: handle incorrect big decimal
+                        if (scan.hasNextBigDecimal()) objs[i] = new BigDecimal(scan.next());
+                        else incorrect = true;
+                        break;
+                    case "java.math.BigInteger": //TODO: handle incorrect big integer?
+                        if (scan.hasNextBigInteger()) objs[i] = new BigDecimal(scan.next());
+                        else incorrect = true;
+                        break;
+                    default:
+                        str = scan.next(); //Default to string
+                        objs[i] = str;
+                }
+
+            } while (incorrect == true);
         }
-//        Object instObj = null;
-//        try {
-//            instObj = newObj.newInstance(objs);
-//        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-//            System.out.println(String.format("Exception[%s], Error msg [%s]", e, e.getMessage()));
-//            e.printStackTrace();
-//        }
-//        return instObj;
+
         return objs;
     }
 
@@ -216,5 +267,24 @@ public class StartMainDriver<T> {
         Matcher m = p.matcher(strScan);
         if (m.matches()) return Integer.parseInt(m.group());
         else return null;
+    }
+
+    /**
+     * Determines that the string can be a numeric number.
+     * @param str  Re-enter value after invalid.
+     * @return     boolean value that it's parsable or not.
+     */
+    private static boolean isParsable(String str, String typeStr) {
+        if (str == null) return false;
+
+        try {
+            if (typeStr.equals("int")) Integer.parseInt(str);
+            if (typeStr.equals("double")) Double.parseDouble(str);
+            if (typeStr.equals("float")) Float.parseFloat(str);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+
+        return true;
     }
 }
