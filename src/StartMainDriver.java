@@ -1,10 +1,7 @@
 import play.AmazonDemo;
 import play.lambdas.Lambdas;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +29,7 @@ public class StartMainDriver<T> {
         CLASS_LIST.add(obj);
     }
 
+    //TODO: once run, keeps going on. exit when typed "quit".
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         System.out.println("#####################");
@@ -68,6 +66,34 @@ public class StartMainDriver<T> {
         try {
             Object[] objs = parseParameters(scan, newConstructor);
             instConstructor = newConstructor.newInstance(objs);//FIXME#3: newInstance() is expecting to have the correct params. throws java.lang.IllegalArgumentException.
+
+            System.out.println("Do you want to accessible field: (Y/N)");
+            String ans = scan.next();
+            Field[] fields = clazz.getDeclaredFields();
+            if ("Y".equalsIgnoreCase(ans)) {
+                for (int i = 0; i < fields.length; i++) {
+                    System.out.println("(Y/N) for field[" + i + "] " + fields[i]);
+                    boolean invalid = false;
+                    do {
+                        String access = scan.next();
+
+                        switch (access) {
+                            case "Y":
+                            case "y":
+                                fields[i].setAccessible(true);
+                                break;
+                            case "N":
+                            case "n":
+                                break;
+                            default:
+                                invalid = true;
+                        }
+                    } while (invalid);
+                }
+            } else {
+                System.out.println("Fields remain non-accessible");
+            }
+
             Method[] methods = instConstructor.getClass().getDeclaredMethods();
             System.out.println(String.format("It has %s methods, see list below", methods.length));
             Arrays.stream(methods).forEach(System.out::println);
@@ -82,6 +108,8 @@ public class StartMainDriver<T> {
             method.setAccessible(true);
             Object retval = method.invoke(clazz.newInstance(), parseParameters(scan, method));
             System.out.println("retval: [" + retval + "]");//FIXME: getStr returning null
+            //TODO: by fixing null, maybe we can access the field from the class.
+
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             System.out.println(String.format("Exception[%s], Error msg [%s]", e, e.getMessage()));
             e.printStackTrace();
@@ -287,4 +315,20 @@ public class StartMainDriver<T> {
 
         return true;
     }
+
+//    private static <T> T accessField(Object obj, Class<?> clazz, String fieldName) throws NoSuchFieldException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+//        Field field = clazz.getDeclaredField(fieldName);
+//        field.setAccessible(true);
+//        return (T) field.get(obj);
+//    }
+//
+//    private static void accessMethod(Object obj, Class<?> clazz, Object[] args, String methodName, Class<?>... parameterTypes) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+//        Method method = clazz.getDeclaredMethod(methodName, parameterTypes);
+//        method.setAccessible(true);
+//        if (args != null) {
+//            method.invoke(obj, args);
+//        } else {
+//            method.invoke(obj);
+//        }
+//    }
 }

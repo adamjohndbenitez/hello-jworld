@@ -150,7 +150,6 @@ public class StartMainDriver_untidy {
         CLASS_LIST.add(obj);
     }
 
-    //TODO: migrate the contents here in main driver.
     public static void main(String[] args) throws Exception {
         Scanner scan = new Scanner(System.in);
         System.out.println("#####################");
