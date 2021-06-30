@@ -1,10 +1,7 @@
 <component name="libraryTable">
   <library name="lib">
-    <CLASSES>
-      <root url="file:///VertX/vert.x-3.9.1-full/vertx/lib" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC />
     <SOURCES />
-    <jarDirectory url="file:///VertX/vert.x-3.9.1-full/vertx/lib" recursive="false" />
   </library>
 </component>
