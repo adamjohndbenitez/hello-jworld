@@ -24,6 +24,7 @@ public class AmazonDemo {
     private String str1;
     private String str2;
     private int int1;
+
     public AmazonDemo(String str1, String str2, int int1) {
         this.str1 = str1;
         this.str2 = str2;

@@ -30,7 +30,7 @@ public class StartMainDriver<T> {
     }
 
     //TODO: once run, keeps going on. exit when typed "quit".
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IllegalAccessException {
         Scanner scan = new Scanner(System.in);
         System.out.println("#####################");
         System.out.println("# hello java world! #");
@@ -44,6 +44,7 @@ public class StartMainDriver<T> {
         int ansClass = userInput(scan, sizeClass);//TODO: userInput should confirmation of the answer.
 
         Class<?> clazz = CLASS_LIST.get(ansClass - 1).getClass();
+        Object origClazz = CLASS_LIST.get(ansClass - 1); //
         System.out.println(String.format("Chose class => %s", clazz));
 
         Constructor<?>[] constructors = clazz.getDeclaredConstructors();
@@ -51,70 +52,81 @@ public class StartMainDriver<T> {
         Arrays.stream(constructors).forEach(System.out::println);
         printing(constructors);
 
-        System.out.println("Pls Select a [number] of constructor above to instantiate:");
-        int ansConstructor = userInput(scan, constructors.length);
+        //TODO: create an option to instantiate.
+        System.out.println("Do you want to instantiate a new constructor of the class you select: (Y/N)");
+        boolean invalid = true;
+        do {
+            String ansInstantiate = scan.next();
+            if (ansInstantiate.equalsIgnoreCase("Y")) {
+                invalid = false;
 
-        Constructor<?> newConstructor = constructors[ansConstructor - 1];
-        System.out.println(String.format("Chose constructor => %s", newConstructor));
-        System.out.println(String.format("It has %s parameter types, see list below", newConstructor.getParameterCount()));
-        Arrays.stream(newConstructor.getParameterTypes()).forEach(System.out::println);
-        System.out.println(String.format("Pls provide [%s] parameter type argument/s to put values on constructor [%s]",
-                newConstructor.getParameterCount(), newConstructor));
+                System.out.println("Pls Select a [number] of the constructor above to instantiate:");
+                int ansConstructor = userInput(scan, constructors.length);
 
-        Object instConstructor;
-        Method method;
-        try {
-            Object[] objs = parseParameters(scan, newConstructor);
-            instConstructor = newConstructor.newInstance(objs);//FIXME#3: newInstance() is expecting to have the correct params. throws java.lang.IllegalArgumentException.
+                Constructor<?> newConstructor = constructors[ansConstructor - 1];
+                System.out.println(String.format("Chose constructor => %s", newConstructor));
+                System.out.println(String.format("It has %s parameter types, see list below", newConstructor.getParameterCount()));
+                Arrays.stream(newConstructor.getParameterTypes()).forEach(System.out::println);
+                System.out.println(String.format("Pls provide [%s] parameter type argument/s to put values on constructor [%s]",
+                        newConstructor.getParameterCount(), newConstructor));
 
-            System.out.println("Do you want to accessible field: (Y/N)");
-            String ans = scan.next();
-            Field[] fields = clazz.getDeclaredFields();
-            if ("Y".equalsIgnoreCase(ans)) {
-                for (int i = 0; i < fields.length; i++) {
-                    System.out.println("(Y/N) for field[" + i + "] " + fields[i]);
-                    boolean invalid = false;
-                    do {
-                        String access = scan.next();
+                try {
+                    Object[] paramObjs = parseParameters(scan, newConstructor);
+                    Object instConstructor = newConstructor.newInstance(paramObjs);//FIXME#3: newInstance() is expecting to have the correct params. throws java.lang.IllegalArgumentException.
 
-                        switch (access) {
-                            case "Y":
-                            case "y":
-                                fields[i].setAccessible(true);
-                                break;
-                            case "N":
-                            case "n":
-                                break;
-                            default:
-                                invalid = true;
-                        }
-                    } while (invalid);
+                    Method[] methods = instConstructor.getClass().getDeclaredMethods();
+                    System.out.println(String.format("It has %s methods, see list below", methods.length));
+                    Arrays.stream(methods).forEach(System.out::println);
+                    printing(methods);
+
+                    System.out.println("Pls Select a [number] of the method to invoke:");
+                    int ansMethod = userInput(scan, methods.length);
+
+                    Method newMethod = methods[ansMethod - 1];
+                    System.out.println("newMethod: [" + newMethod.getName() + "]");
+                    Method method = clazz.getDeclaredMethod(newMethod.getName(), newMethod.getParameterTypes());
+                    method.setAccessible(true);
+                    Object retval2 = method.invoke(instConstructor, parseParameters(scan, method));
+                    System.out.println("retval: [" + retval2 + "]");//FIXME: getStr returning null
+                    //TODO: by fixing null, maybe we can access the field from the class.
+
+                } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                    System.out.println(String.format("Exception[%s], Error msg [%s]", e, e.getMessage()));
+                    e.printStackTrace();
+                }
+            } else if (ansInstantiate.equalsIgnoreCase("N")) {
+                invalid = false;
+
+                try {
+//                    Object[] paramObjs = parseParameters(scan, newConstructor);
+//                    Object instConstructor = newConstructor.newInstance(paramObjs);//FIXME#3: newInstance() is expecting to have the correct params. throws java.lang.IllegalArgumentException.
+
+                    Method[] methods = origClazz.getClass().getDeclaredMethods();
+                    System.out.println(String.format("It has %s methods, see list below", methods.length));
+                    Arrays.stream(methods).forEach(System.out::println);
+                    printing(methods);
+
+                    System.out.println("Pls Select a [number] of the method to invoke:");
+                    int ansMethod = userInput(scan, methods.length);
+
+                    Method newMethod = methods[ansMethod - 1];
+                    System.out.println("Choose method: [" + newMethod.getName() + "]");
+                    Method method = clazz.getDeclaredMethod(newMethod.getName(), newMethod.getParameterTypes());
+                    method.setAccessible(true);
+                    Object retval1 = method.invoke(origClazz, parseParameters(scan, method));
+                    System.out.println("return value: [" + retval1 + "]");//FIXME: getStr returning null
+                    System.out.println("retval value type: [" + retval1 + "]");//FIXME: getStr returning null
+                    //TODO: by fixing null, maybe we can access the field from the class.
+
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    System.out.println(String.format("Exception[%s], Error msg [%s]", e, e.getMessage()));
+                    e.printStackTrace();
                 }
             } else {
-                System.out.println("Fields remain non-accessible");
+                System.out.println("Invalid input! Do you want to instantiate a new constructor of the class you select: (Y/N)");
             }
 
-            Method[] methods = instConstructor.getClass().getDeclaredMethods();
-            System.out.println(String.format("It has %s methods, see list below", methods.length));
-            Arrays.stream(methods).forEach(System.out::println);
-            printing(methods);
-
-            System.out.println("Pls Select a [number] of method to invoke:");
-            int ansMethod = userInput(scan, methods.length);
-
-            Method newMethod = methods[ansMethod - 1];
-            System.out.println("newMethod: [" + newMethod.getName() + "]");
-            method = clazz.getDeclaredMethod(newMethod.getName(), newMethod.getParameterTypes());
-            method.setAccessible(true);
-            Object retval = method.invoke(clazz.newInstance(), parseParameters(scan, method));
-            System.out.println("retval: [" + retval + "]");//FIXME: getStr returning null
-            //TODO: by fixing null, maybe we can access the field from the class.
-
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            System.out.println(String.format("Exception[%s], Error msg [%s]", e, e.getMessage()));
-            e.printStackTrace();
-        }
-
+        } while (invalid);
     }
 
     /**
@@ -225,7 +237,7 @@ public class StartMainDriver<T> {
                         objs[i] = str;
                 }
 
-            } while (incorrect == true);
+            } while (incorrect);
         }
 
         return objs;
@@ -321,7 +333,27 @@ public class StartMainDriver<T> {
 //        field.setAccessible(true);
 //        return (T) field.get(obj);
 //    }
-//
+    private static void alterFieldValues(String fieldName, Class<?> clzz, Object obj, Object value)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field field = clzz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        switch (value.getClass().getTypeName()) {
+            case "boolean":
+                field.setBoolean(obj, (Boolean) value);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + value.getClass());
+        }
+    }
+    /*
+    private static void setField(String fieldName, boolean boolVal) throws NoSuchFieldException, IllegalAccessException {
+        Field checkDesc = _clzz.getDeclaredField(fieldName);
+        checkDesc.setAccessible(true);
+//        checkAsc.set(_obj, Boolean.FALSE); //FIXME: passing _obj not working.
+        checkDesc.setBoolean(_sequentialValidator, boolVal);
+    }
+     */
+
 //    private static void accessMethod(Object obj, Class<?> clazz, Object[] args, String methodName, Class<?>... parameterTypes) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 //        Method method = clazz.getDeclaredMethod(methodName, parameterTypes);
 //        method.setAccessible(true);
