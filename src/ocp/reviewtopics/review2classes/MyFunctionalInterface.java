@@ -1,4 +1,4 @@
-package ocp.reviewtopics.review;
+package ocp.reviewtopics.review2classes;
 
 import java.io.PrintWriter;
 

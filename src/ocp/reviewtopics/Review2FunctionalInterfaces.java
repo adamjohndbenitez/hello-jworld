@@ -1,8 +1,7 @@
 package ocp.reviewtopics;
 
-import ocp.reviewtopics.review.*;
+import ocp.reviewtopics.review2classes.*;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
