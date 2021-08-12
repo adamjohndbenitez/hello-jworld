@@ -1,9 +1,6 @@
 package oca;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class ArraysAndArrayLists {
     public static void main(String[] args) {
@@ -70,12 +67,49 @@ public class ArraysAndArrayLists {
         System.out.println("Adam(element0) & Queenie(element1) are removed");
         list.forEach(System.out::println);
 
-        int i = list.subList(fromIndex,toIndex).indexOf("Princess");
-        System.out.println("Index of Princess : " + i);
-        int j = list.subList(fromIndex, toIndex).lastIndexOf("Princess");
-        System.out.println("Last Index of Princess : " + j);
+        int idx1 = list.subList(fromIndex,toIndex).indexOf("Princess");
+        System.out.println("Index of Princess : " + idx1);
+        int lstIdx = list.subList(fromIndex, toIndex).lastIndexOf("Princess");
+        System.out.println("Last Index of Princess : " + lstIdx);
 
 
+        // The following is a program that uses the dealHand method in combination with Collections.shuffle
+        // to generate hands from a normal 52-card deck. The program takes two command-line arguments:
+        // (1) the number of hands to deal and
+        // (2) the number of cards in each hand.
+        if (args.length < 2) {
+            System.out.println("Usage: Deal hands cards");
+            return;
+        }
+        int numHands = Integer.parseInt(args[0]);
+        int cardsPerHand = Integer.parseInt(args[1]);
+
+        // Make a normal 52-card deck.
+        String[] suit = new String[] {
+                "spades", "hearts",
+                "diamonds", "clubs"
+        };
+        String[] rank = new String[] {
+                "ace", "2", "3", "4",
+                "5", "6", "7", "8", "9", "10",
+                "jack", "queen", "king"
+        };
+
+        List<String> deck = new ArrayList<String>();
+        for (int i = 0; i < suit.length; i++)
+            for (int j = 0; j < rank.length; j++)
+                deck.add(rank[j] + " of " + suit[i]);
+
+        // Shuffle the deck.
+        Collections.shuffle(deck);
+
+        if (numHands * cardsPerHand > deck.size()) {
+            System.out.println("Not enough cards.");
+            return;
+        }
+
+        for (int i = 0; i < numHands; i++)
+            System.out.println(dealHand(deck, cardsPerHand));
     }
 
     /**
