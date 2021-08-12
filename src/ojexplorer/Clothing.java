@@ -1,9 +1,19 @@
 package ojexplorer;
 
-public class Clothing {
+public class Clothing implements Comparable<Clothing> {
     String description;
     double price;
     String size;
+
+    public Clothing(String description, double price, String size) {
+        this.description = description;
+        this.price = price;
+        this.size = size;
+    }
+
+    public Clothing() {
+
+    }
 
     public void setDescription(String description) {
         this.description = description;
@@ -27,5 +37,10 @@ public class Clothing {
 
     public String getSize() {
         return size;
+    }
+
+    @Override
+    public int compareTo(Clothing o) {
+        return this.description.compareTo(o.getDescription());
     }
 }
