@@ -34,11 +34,11 @@ public class Kitchen {
 
         Thread cook1 = new Thread(() -> {
             synchronized (bowl) {
-                System.out.println("Cook1: Holding the spoon...");
-                System.out.println("Cook1: Waiting for the bowl...");
+                System.out.println("Cook2: Holding the spoon...");
+                System.out.println("Cook2: Waiting for the bowl...");
 
                 synchronized (spoon) {
-                    System.out.println("Cook1: Holding the spoon and the bowl...");
+                    System.out.println("Cook2: Holding the spoon and the bowl...");
                 }
             }
         });
@@ -80,8 +80,18 @@ public class Kitchen {
         with the spoon as the monitor objectt.
 
         At the same time, cook two has locked the bowl object.
+        So now cook one has the spoon and is waiting for the bowl object to be free.
+        But cook two has the bowl object and is waiting for the spoon object to be free.
+        So both threads will be waiting forever.
 
+        The program is still running so that is now in deadlock state.
+        stop running the program.
 
+        This is a situation when people caught up when they start using threads.
+        How to fic this depends on the situation and the context.
+        In general it is better to avoid nested blocks of synchronized code like this.
          */
+
+
     }
 }
