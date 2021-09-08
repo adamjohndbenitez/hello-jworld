@@ -8,7 +8,7 @@
 ///**
 // * The Vertx instance by itself doesn't do much except all the thread management,
 // * creating an event bus etc. which are all communication and infrastructure tasks.
-// * In order to get the application to do something useful,
+// * In order to get the application to do collections useful,
 // * you need to deploy one or more verticles (component) inside the Vertx instance.
 // *
 // * Before you can deploy a verticle you need to create it.

@@ -1,0 +1,171 @@
+Tutorial is using open JDK 11.
+Java 9 - to be able to use all of the features in this course.
+Java 8 - although, majority of them will work.
+
+Java has a (6) six-months release cycle.
+
+Long-Term Support Release:
+ - Supported for years by oracle
+ - JAVA 8, 11(current), 17(sept 2021)
+ - more likely used by development teams.
+
+
+Short-Term Feature Releases:
+ - Supported for (6) six-months
+ - JAVA 9, 10, 12, 13, 14, 15, 16
+
+Since JAVA 11, Oracle has had new license terms for using java.
+There are now (2) two types of JDK provided by Oracle.
+
+Commercial Releases        vs         "Open" Releases
+_______________Same_features_in_both_______________________
+Pay for use in production  |  Free and Open Source
+Pay for support            |  No support for older versions
+_______________Not_just_provided_by_Oracle_________________
+
+You can swap between releases without changing any code.
+
+
+
+THE COLLECTIONS FRAMEWORK IN JAVA
+
+Collections - it can let you group objects together in a container
+which can iterrate over.
+
+There are lots of diff imp of collections.
+which type of collections you want/need to use - depends on exact requirerments.
+But there arre some key factors to bear in mind.
+1 - Order?   want any random order?   or we want to be able to access them in specific order?
+2 - Duplicates?   fine to have duplicates?    every entry should be different or unique?
+3 - Speed?   How fast it is to perform certain operations?   quick retrieving?   quick adding and removing?
+4 - Memory?  some collections take up more memory
+
+Useful Resource for choosing which collection to use:
+http://www.sergiy.ca/guide-to-selecting-appropriate-map-collection-in-java/
+
+
+In java, therre is a set of interfaces that define different types of collection.
+   Iterable (all collecition implements Iterable and declare forEach method)
+       |
+       v
+   Collection (which extends Iterable, this interface declare all of the methods that every collection must have)
+      /|\
+     / | \
+    v  v  v
+ Set  List  Queue
+ (many more, but these (3) three commonly used ones)
+
+Sets - do not allow duplicate elements. also unordered.
+Lists - allow duplicate entries. order of elements is significant.
+Queues - lets us add elements. "first in, first out".
+Maps - dont extend Collection interface because they contain key-value pairs.
+
+
+There are no concrete implementation of collection directly.
+
+
+
+MODULARITY IN JAVA
+
+In java 9,  a new module system was introduced.
+Modularity makes it easier to writte well encapsulated code.
+by breaking up large code bases into small sections.
+so why was a module system introduced?
+This can be answered by looking at the JDK itself.
+
+Before Java 9, the JDK was one huge monolithic structure.
+Even if you only wanted to write a small application,
+you still had to have the whole huge JDK on your machine.
+That was even if you weren't using a lot of it.
+
+Another problem is old unused code or old code with security vulnerabilities
+was very difficult to remove - Removing it would lead to backwards compatibility problems.
+The solution to this problem was to introduce modules.
+Means like it could be broken up into small sections.
+Old legacy code could be removed and so could codes that isn't used often.
+Anything extra can be added in if needed.
+If there is a need to make use of lots of the available modules,
+These can easily be imported into the application.
+
+So the module system has been used to break up the JDK itself.
+But it can also be used for creating Java applications.
+Existing java applications can be made modular too.
+Java is often used for building large applications.
+And huge code bases are not unusual.
+Structuring large applicatins can be very difficult.
+But modularity is a useful tool.
+for reducing their complexity.
+
+so what is Module?
+A module is a group of related code.
+so it contains some code and it might contain some other resources too.
+It also has to hav a name like packages in java.
+Module Names live in the global namespace and they need to be unique.
+That means that every single Java module in existence should have a different name.
+With packages this is often achieved with using a company domain name,
+for example, com.mycompany.mypackage.
+Similar thing can be done with modules.
+for example, com.mycompany.mymodule.
+A module contains some information describing itself.
+By default everything in a module is hidden to the outside world.
+even if tthe class is public, it is not actually accessible outside of the module.
+But each module has a module descriptor.
+This can be used to specify if code in the module shold be accessible to other modules.
+The descriptor can also be used to sttate if codee from other modules is going to be used.
+This is useful way tto make sure code is encapsulated.
+Only the code tthat is needed. can be made visible to the outside world.
+and it make structuring large code ebases much more manageable.
+
+
+
+MULTITHREADING
+
+Threads allow multiple actions to be perfomed at the same time inside a single process
+Imagine someone is cooking a meal and they only have a stove with (1) one burner.
+THey need to cook rice and potatoes, if they have (2) two burners, they would be able to cook both rice and potatoes.
+at the same time. THis would be much quicker. Threads work a bit like this.
+In this analogy, cooking the meal is the process, the burner is like the core in the CPU.
+When you have multiple burners you can cook multiple ingredients at once.
+SImilarly, when you have a machine with multiple cores, you can run multiple tasks at the same time.
+In programming, a single process can have multiple threads working at the same time.
+Like a process, a thread is an independent path of execution that runs in isolation.
+Each thread has its own stack and its own local variables
+so when a method is running on a thread, the local variables in the method are only
+available within that thread. This leads to the question why not use multiple processes.
+instead of multiple threads? The answer is that threads are more closely connected to each other than separate processes.
+
+When you open an email app on you computerr and then open browser window,
+those are separate process and have nothing to do with each other.
+But threads in the same process arer more closely connected. they share memory with other threads.
+all of the threads have the same access to global variables.
+This can sometimes lead to issues and mean that carre should be taken when using multiple threads.
+specially in compleex applications
+
+Java has its own API for handling threads.
+
+Examples of when threads can be useful in java:
+- Blocking I/O
+    e.g. if the program asks the user to input some data, a read method might be used which blocks the progrram until the user has input something.
+    This might prevent the progrram fromw performing other ttasks. while waiting for the user like click on a button nothing would happen
+
+- GUI applications
+    e.g. if they use toolkits such as AWT and Swing, multithreading can be use to improve the responsiveness of the program.
+    stop it from hanging.
+
+- Independent Tasks
+    e.g. in particular if there is a large and complex program that performs independent tasks.
+    using multi-threadign is ofthen the most elegant solution.
+
+It is now most commont in a machine to use multiple processes and multi-threading allows you to take advatage of that
+
+(2) two ways to handle threads:
+1 - extends Thread class (this implements Runnable interface)
+2 - implements Runnable interface
+
+(1) one of the benefits of implementing a runnable interface, instead of extending the thread class,
+is that if my class extends the thrread class, that I can't extend any otther classes.
+
+In JAVA, you are only allowed to extend one class, but cuz my class implements runnable - it can extend other classes if I want it to.
+
+When using multithreaded application, problems can sometimes occur when more than one thread is inside the same method.
+Solution: synchronized methods.

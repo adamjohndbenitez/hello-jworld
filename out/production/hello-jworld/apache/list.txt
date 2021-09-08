@@ -1,0 +1,8 @@
+APACHE PROJECT LIST
+https://www.apache.org/index.html#projects-list
+
+Apache Lucene Core
+https://lucene.apache.org/core/
+
+Apache Commons Lang
+https://commons.apache.org/proper/commons-lang/
