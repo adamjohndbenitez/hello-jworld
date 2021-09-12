@@ -4,8 +4,8 @@ https://docs.oracle.com/javase/tutorial/essential/concurrency/sync.html
 "Threads communicate" primarily by "sharing access" to fields and the objects reference fields refer to.
 This form of communication is extremely efficient,
 but makes two kinds of errors possible:
-1. thread interference errors
-2. memory consistency errors.
+- thread interference errors
+- memory consistency errors.
 The tool needed to prevent these errors is "synchronization".
 
 However, synchronization can introduce "thread contention",
@@ -13,16 +13,20 @@ which occurs when two or more threads try to access the same resource simultaneo
 cause the Java runtime to execute one or more threads more slowly, or
 even suspend their execution.
 (2) two forms of thread contention:
-1. Starvation
-2. livelock (Liveness for more information. - https://docs.oracle.com/javase/tutorial/essential/concurrency/liveness.html)
+- Starvation
+- livelock (Liveness for more information. - https://docs.oracle.com/javase/tutorial/essential/concurrency/liveness.html)
 
 SUMMARY:
 "Threads communicate" by "sharing access" PROBLEM=> (1) thread interference & (2) memory consistency errors
 To prevent these errors SOLUTION=> "synchronization" PROBLEM=> (1) Starvation & (2) livelock
 
-Thread Interference - errors introduced when multiple threads "access shared data".
-Memory Consistency Errors - errors result from inconsistent views of "shared memory".
-Synchronized Methods - simple idiom "prevent" thread interference and memory consistency errors.
-Implicit Locks and Synchronization - synchronization idiom, and synchronization is based on "implicit locks".
-Atomic Access - idea of "operations that can't be interfered" with by other threads.
+1. Thread Interference - errors introduced when multiple threads "access shared data".
+
+2. Memory Consistency Errors - errors result from inconsistent views of "shared memory".
+
+3. Synchronized Methods - simple idiom "prevent" thread interference and memory consistency errors.
+
+4. Implicit Locks and Synchronization - synchronization idiom, and synchronization is based on "implicit locks".
+
+5. Atomic Access - idea of "operations that can't be interfered" with by other threads.
 

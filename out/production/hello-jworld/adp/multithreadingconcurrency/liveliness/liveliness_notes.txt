@@ -4,10 +4,11 @@ This section describes the most common kind of liveness problem:
 and goes on to briefly describe two other liveness problems,
 - starvation and livelock.
 
-deadlock - threads are both waiting for each other to response - they took forever cuz they both are waiting.
+1. deadlock - threads are both waiting for each other to response - they took forever
+              cuz they both are waiting.
 
-starvation - other threads frequently synchronized access to the same object will often be blocked
-           - shared resources are made unavailable for long periods by "greedy" threads.
+2. starvation - other threads frequently synchronized access to the same object will often be blocked
+                shared resources are made unavailable for long periods by "greedy" threads.
 
 livelock - making repeating progress because they both repeatedly move the same way at the same time.
 

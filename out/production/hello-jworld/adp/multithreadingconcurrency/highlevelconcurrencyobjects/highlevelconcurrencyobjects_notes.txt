@@ -14,13 +14,17 @@ are implemented in the new java.util.concurrent packages.
 There are also new concurrent data structures in the Java Collections Framework.
 
 1. Lock objects - support locking idioms that simplify many concurrent applications.
+
 2. Executors - define a high-level API for launching and managing threads.
              - Executor implementations provided by java.util.concurrent
                provide thread pool management suitable for large-scale applications.
+
 3. Concurrent collections - make it easier to manage large collections of data,
                             and can greatly reduce the need for synchronization.
+
 4. Atomic variables - have features that minimize synchronization and
                       help avoid memory consistency errors.
+
 5. ThreadLocalRandom - (in JDK 7) provides efficient generation of
                         pseudo-random numbers from multiple threads.
 
