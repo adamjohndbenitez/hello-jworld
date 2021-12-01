@@ -1,0 +1,49 @@
+Java Foundations
+Exam Number: 1Z0-811
+
+
+Lesson-by-Lesson Topics
+Introduction
+• About the Course
+• Brief History
+• Setting up Java
+Java Software Development
+• The Software Development Process
+• What is my Program Doing?
+• Introduction to Object-Oriented Programming Concepts
+Java Data Types
+• What is a Variable?
+• Numeric Data
+• Textual Data
+• Converting Between Data Types
+• Keyboard Input
+Java Methods and Library Classes
+• What is a Method?
+• The import Declaration and Packages
+• The String Class
+• The Random Class
+• The Math Class
+Decision Statements
+• Boolean Expressions and if/else Constructs
+• Understanding Conditional Execution
+• switch Statement
+Loop Constructs
+• for Loops
+• while and do-while Loops
+• Using break and continue Statements
+Creating Classes
+• Creating a Class?
+• Instantiating Objects
+• Constructors
+• Overloading Methods
+• Object Interaction and Encapsulation
+• static Variables and Methods
+Arrays and Exceptions
+• One-dimensional Arrays
+• ArrayLists
+• Exception Handling
+• Debugging Concepts and Techniques
+JavaFX
+• Introduction to Java FX
+• Colors and Shapes
+• Graphics, Audio and MouseEvents

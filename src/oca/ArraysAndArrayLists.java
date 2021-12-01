@@ -256,6 +256,7 @@ public class ArraysAndArrayLists {
         for (String coffee : copyTo) {
             System.out.print(coffee + " ");
         }
+        System.out.print(System.lineSeparator());
     }
 
     /*

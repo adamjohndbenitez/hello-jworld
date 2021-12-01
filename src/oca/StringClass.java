@@ -14,11 +14,11 @@ public class StringClass {
         System.out.println(c + "character at index 0");
         boolean isEquals = str.equals(new String(new char[]{'S', 't', 'i', 'n', 'g'}));
         System.out.println(isEquals ? "same in set of characters" : "no equal");
-        int lexi = str.compareTo("String");
+        int lexi = str.compareTo("11111111111111String"); // ("Stringss"):lexi=-2,  ("Str"):lexi=3,  ("String"):lexi=0,
         if (lexi < 0) {
-            System.out.println("Comparing lexi to 0The result is a negative integer if this String object lexicographically precedes the argument string.");
+            System.out.println("Comparing lexi to 0 The result is a negative integer if this String object lexicographically PRECEDES the argument string.");
         } else if (lexi > 0) {
-            System.out.println("The result is a positive integer if this String object lexicographically follows the argument string.");
+            System.out.println("The result is a positive integer if this String object lexicographically FOLLOWS the argument string.");
         } else if (lexi == 0) {
             System.out.println("The result is zero if the strings are equal");
         }

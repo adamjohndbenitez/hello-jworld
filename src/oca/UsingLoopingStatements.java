@@ -26,6 +26,7 @@ public class UsingLoopingStatements {
         breakDemo();
         breakWithLabelDemo();
         continueDemo();
+        continueWithLabelDemo();
     }
 
     private static void forLoopDemo() {
@@ -113,7 +114,7 @@ public class UsingLoopingStatements {
             }
         }
 
-        if (foundIt) {
+        if (foundIt) { // w/ "search:" it goes here if that goes into "break search;"
             System.out.println("Found " + searchfor + " at " + i + ", " + j);
         } else {
             System.out.println(searchfor + " not in the array");
@@ -147,7 +148,7 @@ public class UsingLoopingStatements {
                 substring.length();
 
         test: //uses the labeled form of continue to skip an iteration in the outer loop.
-        for (int i = 0; i <= max; i++) {
+        for (int i = 0; i <= max; i++) { // when "continue test;" execute, & w/ "test:" it goes to the outermost loop to skip by passing all inner/nested loop
             int n = substring.length();
             int j = i;
             int k = 0;
