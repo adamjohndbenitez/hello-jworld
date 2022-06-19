@@ -1,14 +1,19 @@
 package oca.foundations;
 
 
+import oca.IncorrectFileNameException;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.EmptyStackException;
+import java.util.Scanner;
 
-public class JavaExplorerAssessment {
-    public static void main(String[] args) {
+public class JavaExplorerAssessment extends Exception {
+    public static void main(String[] args) throws IncorrectFileNameException {
         //#1. create a Clothing array to store these two items?
-        Clothing item1 = new Clothing("herschel");
-        Clothing item2 = new Clothing("puma");
+        Clothing item1 = new Clothing("herschel", 1);
+        Clothing item2 = new Clothing("puma", 2);
         //Clothing[] items = (item1, item2);//wrong
         //Clothing items = [item1, item2];//wrong
         //Clothing[] items(item1, item2});//wrong
@@ -78,7 +83,7 @@ public class JavaExplorerAssessment {
         switch (measurement) {
             case 3: c1.size = "S";
             case 6: c1.size = "M";
-            case 9: c1.size = "L"; //correct ans, because there are no breaks
+            case 9: c1.size = "L"; //correct ans, because there are no breaks, it doesn't stop
             break;
             default: c1.size = "X";
         }
@@ -93,8 +98,8 @@ public class JavaExplorerAssessment {
         System.out.println("Price: " + item1.getPrice());
 
         c1.addItem(new Clothing[]{
-                new Clothing("nike"),
-                new Clothing("rebook")
+                new Clothing("nike", 1),
+                new Clothing("rebook", 2)
         });
 
         Arrays.asList(c1.getClothingList()).forEach(c -> System.out.println("clothing: " + c.getDescription()));
@@ -117,10 +122,10 @@ public class JavaExplorerAssessment {
         }//correct
 
         //#11
-        Clothing item3 = new Clothing("Blue Jacket", 20.9, "M");
+        Clothing item3 = new Clothing("Blue Jacket", 20);
 
         Employee[] department = new Employee[10];
-        //department[11] = new Employee();// throws Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: 11   at oca.foundations.JavaExplorerAssessment.main(JavaExplorerAssessment.java:122)
+//        department[11] = new Employee();// throws Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: 11   at oca.foundations.JavaExplorerAssessment.main(JavaExplorerAssessment.java:122)
         //#12 What exception occurs when you try adding an eleventh employee to the department?
 
         /*
@@ -181,27 +186,28 @@ public class JavaExplorerAssessment {
         to the total if it’s the same size as the customer c1?
         Assume the Customer class has a public String field size.
          */
-        /*for(Clothing c: items){
+        /*for(Clothing c: items){ // Exception in thread "main" java.lang.NullPointerException
             if(c.size.equals(c1)){
                 //add to total
             }
         }*/
 
+
         /*for(Clothing c: items){
-            if(c.size.equals(c1.size)){ // Exception in thread "main" java.lang.NullPointerException
+            if(c.size.equals(c1.size)){ // red on equals since size is int.
                 //add to total
                 System.out.println("added cloth");
             }
         }*/
 
         /*for(Clothing c: items){
-            if(c == c1)){
+            if(c == c1)){ // not a size
                 //add to total
             }
         }*/
 
         /*for(Clothing c: items){
-            if(items[c].size.equals(c.size)){
+            if(items[c].size.equals(c.size)){ // red on [c]
                 //add to total
             }
         }*/
@@ -242,6 +248,49 @@ public class JavaExplorerAssessment {
          - IllegalAccessException signals that a particular method could not be found.
          - NegativeArraySizeException indicates that a program attempted to create an array with a negative size.
          */
+
+        /* Reason why Custom Exceptions:
+            1. Business Logic Exceptions - help the application users or the developers understand what the exact problem is.
+            2. Subset of Java Exceptions - specific treatment to a subset of existing Java exceptions
+        */
+
+        String filename = "1Z0-811_notes.txt";
+        try (Scanner sc = new Scanner(new File(filename))) {
+            if (sc.hasNextLine()) System.out.println("File next line : " + sc.nextLine());
+        } catch (FileNotFoundException fnfe) { // <- classic way of handling Java "CHECKED" exceptions.
+            // While the code throws FileNotFoundException,
+            // "it's not clear what the exact cause is"
+            // — whether the file doesn't exist
+            // or the file name is invalid.
+            if (!isCorrectFileName(filename)) {
+                try { // if not try-catch, you can add IncorrectFileNameException in the method public static void main(String[] args) throws IncorrectFileNameException {
+                    throw new IncorrectFileNameException("Incorrect filename : " + filename, fnfe); // passing e will not lose the root cause from which they occurred.
+                } catch (IncorrectFileNameException incorrectFileNameException) {
+                    incorrectFileNameException.printStackTrace();
+                }
+            }
+
+            // we'll need a custom unchecked exception similar to the previous one,
+            // as this error will only be detected during runtime.
+        } catch (IllegalArgumentException iae) {
+            if (!containsExtension(filename)) {
+                throw new IncorrectFileNameException("Filename does not contain extension : " + filename, iae); // passing e will not lose the root cause from which they occurred.
+            }
+        }
+
+        // NOTE: To create a custom exception, we have to extend the java.lang.Exception class.
+        // NOTE: To create a custom unchecked exception, we need to extend the java.lang.RuntimeException class:
+
+        // Checked = Explicit = Compile time (eg. java classic exceptions)
+        // Unchecked = Implicit = Runtime ()
+    }
+
+    private static boolean containsExtension(String filename) {
+        return filename.contains(".txt");
+    }
+
+    private static boolean isCorrectFileName(String filename) {
+        return !filename.isEmpty(); // supposed we check if file is not exist or empty
     }
 
     public static void moveCircle(Circle circle, int deltaX, int deltaY) {
@@ -323,10 +372,12 @@ class Clothing implements Comparable<Clothing> {
 
     String description;
     double price;
-    String size;
+//    String size;
+    int size;
 
-    public Clothing(String description) {
+    public Clothing(String description, int size) {
         this.description = description;
+        this.size = size;
     }
 
     public Clothing() {
@@ -336,13 +387,13 @@ class Clothing implements Comparable<Clothing> {
     #11 Clothing item1 = new Clothing("Blue Jacket", 20.9, "M");
     How would you declare the Clothing constructor?
      */
-    public Clothing(String description,
+    /*public Clothing(String description,
                     double price,
                     String size) {
         this.description = description;
         this.price = price;
         this.size = size;
-    }
+    }*/
 
     public void setDescription(String description) {
         this.description = description;
@@ -361,7 +412,7 @@ class Clothing implements Comparable<Clothing> {
         }
     }
 
-    public void setSize(String size) {
+    public void setSize(int size) {
         this.size = size;
     }
 
@@ -373,7 +424,7 @@ class Clothing implements Comparable<Clothing> {
         return price;
     }
 
-    public String getSize() {
+    public int getSize() {
         return size;
     }
 

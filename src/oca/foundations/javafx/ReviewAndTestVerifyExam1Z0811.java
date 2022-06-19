@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import static java.lang.System.out;
 
-public class ReviewAndTestVerifyExam1Z0811 {
+public class ReviewAndTestVerifyExam1Z0811 implements Comparable<ReviewAndTestVerifyExam1Z0811>{
     {
         System.out.println("Hello World");
     }
@@ -30,11 +30,11 @@ public class ReviewAndTestVerifyExam1Z0811 {
     public static void main(String[] args) throws Exception {
         String s1 = new String("cat");
         String s2 = "cat";
-        System.out.println("s1.equals(s2) : " + s1.equals(s2));
-        System.out.println("s1 == s2 : " + (s1 == s2));
-        System.out.println("s1.compareTo(s2) : " + s1.compareTo(s2));
+        System.out.println("s1.equals(s2) : " + s1.equals(s2)); // true
+        System.out.println("s1 == s2 : " + (s1 == s2)); // false
+        System.out.println("s1.compareTo(s2) : " + s1.compareTo(s2)); // 0
 
-        System.out.printf("%s friend is not a %s", s1, s2);
+        System.out.printf("%s friend is not a %s", s1, s2); //
 
         ReviewAndTestVerifyExam1Z0811 e = new ReviewAndTestVerifyExam1Z0811(); // worke
 
@@ -208,7 +208,7 @@ public class ReviewAndTestVerifyExam1Z0811 {
         System.out.println("value += 0.1f = " + value);
 
         boolean isEqual = (value == 1.3f); // false
-        System.out.println("isEqual = " + isEqual);
+        System.out.println("(value == 1.3f) = " + isEqual);
         // To solve this -
         // 2 options:
         // (1) Either by using java.util.BigDecimal, which is exact.
@@ -255,30 +255,32 @@ public class ReviewAndTestVerifyExam1Z0811 {
         Object obj2 = obj1;
         System.out.println("Reflexive: " +
                 "An object should be equal with itself: " +
-                "obj.equals(obj) == true: " + obj.equals(obj));
+                "obj.equals(obj) == true: " + obj.equals(obj)); // true
         System.out.println("Symmetric: " +
                 "If a.equals(b) == true, " +
                 "then b.equals(a) must also be true: " +
-                (obj1.equals(obj) && obj.equals(obj1)) );
+                (obj1.equals(obj) && obj.equals(obj1)) ); // true
         System.out.println("Transitive: " +
                 "If a.equals(b) == true " +
                 "and b.equals(c) == true, " +
                 "then a.equals(c) should be true: " +
-                ((obj1.equals(obj) && obj2.equals(obj1)) && (obj.equals(obj2))));
+                ((obj1.equals(obj) && obj2.equals(obj1)) && (obj.equals(obj2)))); // true
         System.out.println("Consistent: " +
                 ".equals(b) should always have " +
-                "the same value for unmodified objects: " + obj1.equals(obj));
+                "the same value for unmodified objects: " + obj1.equals(obj)); // true
         System.out.println("Null handling: " +
-                "a.equals(null) should be false: " + obj.equals(null));
+                "a.equals(null) should be false: " + obj.equals(null)); // false
         System.out.println("Hash code: " +
                 "Equal objects must have the same hash code: " +
                 "|" + obj.hashCode() + "|" +
                 "|" + obj.hashCode() + "|" +
-                (obj.hashCode() == obj.hashCode()));
-        System.out.println("obj1 != obj2 hashcode: " +
+                (obj.hashCode() == obj.hashCode())); // true
+//        System.out.println("obj1 != obj2 hashcode: " +
+        System.out.println("obj1 == obj2 hashcode: " +
                 "|" + obj1.hashCode() + "|" +
                 "|" + obj2.hashCode() + "|" +
-                (obj1.hashCode() != obj2.hashCode()));
+//                (obj1.hashCode() != obj2.hashCode())); // false
+                (obj1.hashCode() == obj2.hashCode())); // true
 
         // If we need to work with decimal values and need absolute precision,
         // we should always use java.util.BigDecimal. But be aware that
@@ -299,27 +301,34 @@ public class ReviewAndTestVerifyExam1Z0811 {
 
         boolean yEqual = a1.equals(b1);    // true
         System.out.println("yEqual : " + yEqual);
-        int zResult    = a1.compareTo(c1); // 0
+        int zResult    = a1.compareTo(c1); // 0, compareTo() consider .00 as .0;
         System.out.println("zResult : " + zResult);
+        // NOTE: object should be implements Comparable<ReviewAndTestVerifyExam1Z0811> to use compareTo() method.
+        // Then implements method compareTo() from java.lang.Comparable
+        // But most of the wrapper primitive classes are already implemented in Comparable
+        ReviewAndTestVerifyExam1Z0811 reviewAndTestVerifyExam1Z0811 = new ReviewAndTestVerifyExam1Z0811();
+        reviewAndTestVerifyExam1Z0811.compareTo(reviewAndTestVerifyExam1Z0811);
 
         String[] nums = {"One", "Two", "Three", "Four", "Five", "Six", "Sev"};
-        for(int d1 = 0; d1 < nums.length; d1++) {
-           if (nums[d1++].length() % 3 == 0) {
+        for (int d1 = 0; d1 < nums.length; d1++) { // d1=0; d1=2
+            boolean cond = nums[d1++].length() % 3 == 0;
+           if (cond) { //d++ : d1=1,true,skip; d1=3,false,stop;
+               out.println(cond);
               continue;
            }
-           System.out.println(nums[d1]);
+           System.out.println(nums[d1]); // nums[3] = "Four"
            break;
         }
         /* NOTE:
-        for loop, starts with initial e1 = 0, - 1st execute block
-        if condition passed then e1++ - next execute block
+        for loop, starts with initial d1 = 0, - 1st execute block
+        if condition passed then d1++ - next execute block
          */
 
         /* ^ skip by 1
-        e1 : 0
-        e1 : 2
-        e1 : 4
-        e1 : 6
+        d1 : 0
+        d1 : 2
+        d1 : 4
+        d1 : 6
          */
 
         /*
@@ -402,6 +411,7 @@ public class ReviewAndTestVerifyExam1Z0811 {
         } catch (NoSuchFieldException l1) {
             l1.printStackTrace();
         }
+
     }
 
     private static void method(int a, int b) {
@@ -456,4 +466,46 @@ public class ReviewAndTestVerifyExam1Z0811 {
     }
 
 
+    /**
+     * Compares this object with the specified object for order.  Returns a
+     * negative integer, zero, or a positive integer as this object is less
+     * than, equal to, or greater than the specified object.
+     *
+     * <p>The implementor must ensure <tt>sgn(x.compareTo(y)) ==
+     * -sgn(y.compareTo(x))</tt> for all <tt>x</tt> and <tt>y</tt>.  (This
+     * implies that <tt>x.compareTo(y)</tt> must throw an exception iff
+     * <tt>y.compareTo(x)</tt> throws an exception.)
+     *
+     * <p>The implementor must also ensure that the relation is transitive:
+     * <tt>(x.compareTo(y)&gt;0 &amp;&amp; y.compareTo(z)&gt;0)</tt> implies
+     * <tt>x.compareTo(z)&gt;0</tt>.
+     *
+     * <p>Finally, the implementor must ensure that <tt>x.compareTo(y)==0</tt>
+     * implies that <tt>sgn(x.compareTo(z)) == sgn(y.compareTo(z))</tt>, for
+     * all <tt>z</tt>.
+     *
+     * <p>It is strongly recommended, but <i>not</i> strictly required that
+     * <tt>(x.compareTo(y)==0) == (x.equals(y))</tt>.  Generally speaking, any
+     * class that implements the <tt>Comparable</tt> interface and violates
+     * this condition should clearly indicate this fact.  The recommended
+     * language is "Note: this class has a natural ordering that is
+     * inconsistent with equals."
+     *
+     * <p>In the foregoing description, the notation
+     * <tt>sgn(</tt><i>expression</i><tt>)</tt> designates the mathematical
+     * <i>signum</i> function, which is defined to return one of <tt>-1</tt>,
+     * <tt>0</tt>, or <tt>1</tt> according to whether the value of
+     * <i>expression</i> is negative, zero or positive.
+     *
+     * @param o the object to be compared.
+     * @return a negative integer, zero, or a positive integer as this object
+     * is less than, equal to, or greater than the specified object.
+     * @throws NullPointerException if the specified object is null
+     * @throws ClassCastException   if the specified object's type prevents it
+     *                              from being compared to this object.
+     */
+    @Override
+    public int compareTo(ReviewAndTestVerifyExam1Z0811 o) {
+        return this == o ? 0 : 1;
+    }
 }

@@ -34,10 +34,11 @@ public class StringClass {
             System.out.println("(limit:1) splitted - " + r);
         }
         boolean isStart = str.startsWith("S");
-        System.out.println(str + "is starts with S: " + (isStart ? "yes" : "no"));
+        System.out.println(str + " is starts with S: " + (isStart ? "yes" : "no"));
         boolean isStart1 = str.startsWith("S", 3);
-        System.out.println(str + "is starts with S after index 3: " + (isStart1 ? "yes" : "no"));
-        boolean contentsStr = str.contentEquals("Str");
+        System.out.println(str + " is starts with S after index 3: " + (isStart1 ? "yes" : "no"));
+//        boolean contentsStr = str.contentEquals("Str");
+        boolean contentsStr = str.contentEquals("String");
         System.out.println(str + " contains Str " + (contentsStr ? "YES" : "NO"));
         boolean contentsStr1 = str.contentEquals(new StringBuffer("String"));
         System.out.println(str + " contains String " + (contentsStr1 ? "YES" : "NO"));
