@@ -1,0 +1,1 @@
+/* Create an array with a few elements. Shuffle the elements of the array in a random fashion */

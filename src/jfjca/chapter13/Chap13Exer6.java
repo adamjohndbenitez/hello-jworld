@@ -1,0 +1,1 @@
+/* Write a method that takes a String[] as an argument and returns a String containing the concatenation of all the strings in the input array. Invoke your method with different arguments. Make sure that your code handles the cases where the argument is null, contains a few nulls, or contains only nulls. */

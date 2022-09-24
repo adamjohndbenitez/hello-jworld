@@ -1,0 +1,1 @@
+/* Create two arrays. One containing String values: Amy, Boyd, and Cathy, and another one containing int values: 10, 11, and 12. Use printf and format methods to create an HTML table showing these values as name value pairs. */
