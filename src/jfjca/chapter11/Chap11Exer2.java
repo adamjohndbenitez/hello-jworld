@@ -12,6 +12,14 @@ package jfjca.chapter11;
    values. AFter return back to method1
    print the values again. Explain output*/
 
+/* Create another method name add in the same
+   class that can accept any number of int values
+   but returns a String containing concatenation
+   of all those values. What can you do to resolve
+   compilation error due to the presence of the
+   two methods with same signature? Invoke these
+   methods from the main method of this class. */
+
 class Chap11Exer2 {
 
     public static void main(String[] args) {
@@ -30,4 +38,5 @@ class Chap11Exer2 {
         System.out.println("Student Field #3" + student.getField3());
         System.out.println("Student Field #4" + student.getField4());
     }
+
 }
